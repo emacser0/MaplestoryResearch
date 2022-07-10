@@ -82,3 +82,5 @@ Assets/**/*.xml
 Assets/**/*.xml.meta
 Assets/**/*.png
 Assets/**/*.png.meta
+
+Data/*

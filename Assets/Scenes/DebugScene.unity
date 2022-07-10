@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1120100
-  animationType: die1
+  currentAnimationType: die1
 --- !u!1 &117375941
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8880150
-  animationType: skill6
+  currentAnimationType: skill6
 --- !u!1 &126332537
 GameObject:
   m_ObjectHideFlags: 0
@@ -691,7 +691,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600632
-  animationType: hit1
+  currentAnimationType: hit1
 --- !u!1 &225780735
 GameObject:
   m_ObjectHideFlags: 0
@@ -743,7 +743,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210102
-  animationType: stand
+  currentAnimationType: stand
 --- !u!1 &232962211
 GameObject:
   m_ObjectHideFlags: 0
@@ -795,7 +795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210102
-  animationType: jump
+  currentAnimationType: jump
 --- !u!1 &248794897
 GameObject:
   m_ObjectHideFlags: 0
@@ -847,7 +847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1120100
-  animationType: stand
+  currentAnimationType: stand
 --- !u!1 &250920564
 GameObject:
   m_ObjectHideFlags: 0
@@ -1041,7 +1041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800001
-  animationType: attack1
+  currentAnimationType: attack1
 --- !u!1 &259886774
 GameObject:
   m_ObjectHideFlags: 0
@@ -1339,7 +1339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0100007
-  animationType: move
+  currentAnimationType: move
 --- !u!224 &270918170
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1501,7 +1501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210101
-  animationType: jump
+  currentAnimationType: jump
 --- !u!1 &311685812
 GameObject:
   m_ObjectHideFlags: 0
@@ -1731,7 +1731,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210101
-  animationType: move
+  currentAnimationType: move
 --- !u!1 &387992862
 GameObject:
   m_ObjectHideFlags: 0
@@ -1836,7 +1836,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &388669664
 Transform:
   m_ObjectHideFlags: 0
@@ -1987,7 +1987,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800000
-  animationType: skill2
+  currentAnimationType: skill2
 --- !u!224 &428843103
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2112,7 +2112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210102
-  animationType: die1
+  currentAnimationType: die1
 --- !u!1 &493053912
 GameObject:
   m_ObjectHideFlags: 0
@@ -2217,7 +2217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800000
-  animationType: attack2
+  currentAnimationType: attack2
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -2332,7 +2332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0100007
-  animationType: die1
+  currentAnimationType: die1
 --- !u!224 &543690275
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2369,7 +2369,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &618581964
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2411,7 +2411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &654150960
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2631,7 +2631,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800000
-  animationType: skill3
+  currentAnimationType: skill3
 --- !u!1 &751907923
 GameObject:
   m_ObjectHideFlags: 0
@@ -2736,7 +2736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600632
-  animationType: stand
+  currentAnimationType: stand
 --- !u!1 &752206455
 GameObject:
   m_ObjectHideFlags: 0
@@ -2768,7 +2768,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2230111
-  animationType: die1
+  currentAnimationType: die1
 --- !u!212 &752206458
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3302,7 +3302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8880150
-  animationType: skill3
+  currentAnimationType: skill3
 --- !u!1 &845644599
 GameObject:
   m_ObjectHideFlags: 0
@@ -3407,7 +3407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8880150
-  animationType: skill2
+  currentAnimationType: skill2
 --- !u!1 &888776009
 GameObject:
   m_ObjectHideFlags: 0
@@ -3459,7 +3459,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210101
-  animationType: stand
+  currentAnimationType: stand
 --- !u!1 &906839404
 GameObject:
   m_ObjectHideFlags: 0
@@ -3742,7 +3742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800001
-  animationType: skill3
+  currentAnimationType: skill3
 --- !u!1 &936887331
 GameObject:
   m_ObjectHideFlags: 0
@@ -3847,7 +3847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8880150
-  animationType: skill5
+  currentAnimationType: skill5
 --- !u!1 &973096898
 GameObject:
   m_ObjectHideFlags: 0
@@ -4486,7 +4486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600632
-  animationType: die1
+  currentAnimationType: die1
 --- !u!1 &1092816225
 GameObject:
   m_ObjectHideFlags: 0
@@ -4591,7 +4591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600632
-  animationType: fly
+  currentAnimationType: fly
 --- !u!1 &1110310740
 GameObject:
   m_ObjectHideFlags: 0
@@ -4622,7 +4622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0100007
-  animationType: jump
+  currentAnimationType: jump
 --- !u!224 &1110310744
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4748,7 +4748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8880150
-  animationType: skill1
+  currentAnimationType: skill1
 --- !u!1 &1122249089
 GameObject:
   m_ObjectHideFlags: 0
@@ -4847,7 +4847,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2230111
-  animationType: hit1
+  currentAnimationType: hit1
 --- !u!212 &1133964746
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4972,7 +4972,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1120100
-  animationType: move
+  currentAnimationType: move
 --- !u!1 &1173440674
 GameObject:
   m_ObjectHideFlags: 0
@@ -5077,7 +5077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800000
-  animationType: skill1
+  currentAnimationType: skill1
 --- !u!1 &1263783049
 GameObject:
   m_ObjectHideFlags: 0
@@ -5088,6 +5088,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1263783051}
   - component: {fileID: 1263783050}
+  - component: {fileID: 1263783052}
   m_Layer: 0
   m_Name: Loader
   m_TagString: Untagged
@@ -5122,6 +5123,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1263783052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1263783049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55f38f58eb6286845953f54e0ac35819, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1267340640
 GameObject:
   m_ObjectHideFlags: 0
@@ -5213,7 +5226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1120100
-  animationType: hit1
+  currentAnimationType: hit1
 --- !u!1 &1344475228
 GameObject:
   m_ObjectHideFlags: 0
@@ -5354,7 +5367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210101
-  animationType: die1
+  currentAnimationType: die1
 --- !u!1 &1413404957
 GameObject:
   m_ObjectHideFlags: 0
@@ -5677,7 +5690,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800001
-  animationType: skill1
+  currentAnimationType: skill1
 --- !u!1 &1453367128
 GameObject:
   m_ObjectHideFlags: 0
@@ -5708,7 +5721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2230111
-  animationType: stand
+  currentAnimationType: stand
 --- !u!224 &1453367133
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6101,7 +6114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800000
-  animationType: attack1
+  currentAnimationType: attack1
 --- !u!1 &1574760406
 GameObject:
   m_ObjectHideFlags: 0
@@ -6602,7 +6615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800001
-  animationType: attack3
+  currentAnimationType: attack3
 --- !u!1 &1671100282
 GameObject:
   m_ObjectHideFlags: 0
@@ -6900,7 +6913,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0100007
-  animationType: stand
+  currentAnimationType: stand
 --- !u!224 &1702427064
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7309,7 +7322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600631
-  animationType: skill1
+  currentAnimationType: skill1
 --- !u!224 &1764593064
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7487,7 +7500,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800000
-  animationType: attack3
+  currentAnimationType: attack3
 --- !u!1 &1865011402
 GameObject:
   m_ObjectHideFlags: 0
@@ -7770,7 +7783,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600631
-  animationType: skill2
+  currentAnimationType: skill2
 --- !u!1 &1897280979
 GameObject:
   m_ObjectHideFlags: 0
@@ -7875,7 +7888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2600631
-  animationType: skill3
+  currentAnimationType: skill3
 --- !u!1 &1909350488
 GameObject:
   m_ObjectHideFlags: 0
@@ -7980,7 +7993,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8880150
-  animationType: skill4
+  currentAnimationType: skill4
 --- !u!1 &1916673927
 GameObject:
   m_ObjectHideFlags: 0
@@ -8174,7 +8187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1971144642
 Transform:
   m_ObjectHideFlags: 0
@@ -8297,7 +8310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800001
-  animationType: attack2
+  currentAnimationType: attack2
 --- !u!1 &2095046266
 GameObject:
   m_ObjectHideFlags: 0
@@ -8368,7 +8381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 2230111
-  animationType: move
+  currentAnimationType: move
 --- !u!224 &2100552328
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8483,7 +8496,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 1210102
-  animationType: move
+  currentAnimationType: move
 --- !u!1 &2140373647
 GameObject:
   m_ObjectHideFlags: 0
@@ -8588,4 +8601,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 8800001
-  animationType: skill2
+  currentAnimationType: skill2
