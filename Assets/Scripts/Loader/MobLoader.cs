@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
-using Assets.Scripts.Loader;
 
 public class WzSprite : WzData
 {
@@ -38,20 +37,6 @@ public class WzSprite : WzData
 
     public Texture2D texture { get => _texture; set => _texture = value; }
     public Sprite sprite { get => _sprite; set => _sprite = value; }
-}
-
-public class WzMob : WzData
-{
-    public WzMob()
-    {
-
-    }
-
-    public WzMob(XmlElement element)
-        : base(element)
-    {
-
-    }
 }
 
 public class MobLoader : MonoBehaviour

@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Assets.Scripts.Loader;
+using System.IO;
+using System.Drawing.Imaging;
 
-public class SpriteObject
+using UnityEngine;
+using WzComparerR2.WzLib;
+
+internal class SpriteObject
 {
     public SpriteObject()
     {
@@ -51,31 +54,50 @@ public class SpriteObject
 
 public class DebugMob : MonoBehaviour
 {
-    public string id;
-    public string animationType = "stand";
-
-    private MobLoader loader;
-    private WzData mob;
+    public string id = "";
+    public string currentAnimationType = "stand";
 
     int currentSpriteIndex = 0;
     int currentEffectIndex = 0;
 
-    SpriteObject character;
-    SpriteObject effect;
+    SpriteObject character = null;
+    SpriteObject effect = null;
 
-    string currentAnimationType;
+    private WzLoader wzLoader = null;
+    private WzMob wzMob = null;
+
+    private Dictionary<string, Wz_Node> _animationNodeCache = new Dictionary<string, Wz_Node>();
+    private Dictionary<string, Wz_Node> _pngNodeCache = new Dictionary<string, Wz_Node>();
+    private Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
+
+    private Coroutine animationCoroutine = null;
+    private Coroutine characterCoroutine = null;
+    private Coroutine effectCoroutine = null;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        loader = GameObject.Find("Loader").GetComponent<MobLoader>();
-        mob = loader.Load(id);
+        wzLoader = GameObject.Find("Loader").GetComponent<WzLoader>();
 
         var preview = transform.Find("Preview");
         if(preview != null)
         {
             Destroy(preview.gameObject);
         }
+       
+        if(id.Length > 0)
+        {
+            Load(id);
+        }
+    }
+
+    public void Load(string mobId)
+    {
+        _animationNodeCache.Clear();
+        _pngNodeCache.Clear();
+        _spriteCache.Clear();
+
+        id = mobId;
 
         character = new SpriteObject("Character", transform);
         effect = new SpriteObject("Effect", transform);
@@ -85,117 +107,230 @@ public class DebugMob : MonoBehaviour
             effect.transform.localPosition.y,
             -1.0f);
 
-        StartCoroutine("Animate");
+        currentSpriteIndex = 0;
+        currentEffectIndex = 0;
+
+        var wzImg = wzLoader.GetImg("Mob", mobId);
+        wzMob = new WzMob(wzImg);
+
+        animationCoroutine = StartCoroutine(Animate());
+    }
+
+    public void SetAnimationType(string animationType)
+    {
+        currentAnimationType = animationType;
+        currentSpriteIndex = 0;
+        currentEffectIndex = 0;
+
+        animationCoroutine = StartCoroutine(Animate());
     }
 
     private IEnumerator Animate()
     {
         while(true)
         {
-            Coroutine character = StartCoroutine(AnimateCharacter());
-            Coroutine effect = StartCoroutine(AnimateEffect());
+            characterCoroutine = StartCoroutine(AnimateCharacter());
+            effectCoroutine = StartCoroutine(AnimateEffect());
 
-            yield return character;
-            yield return effect;
+            yield return characterCoroutine;
+            yield return effectCoroutine;
 
             currentSpriteIndex = 0;
             currentEffectIndex = 0;
         }
     }
 
-    private IEnumerator AnimateCharacter()
+    private Wz_Node GetAnimationNode(string animationType)
     {
-        WzData animationSprite = null;
-        if(mob.Dir["info"].HasString("link"))
+        Wz_Node animationNode = null;
+        if (_animationNodeCache.ContainsKey(animationType))
         {
-            animationSprite = loader.Load(mob.Dir["info"].String["link"]).Dir[animationType];
+            animationNode = _animationNodeCache[animationType];
         }
         else
         {
-            animationSprite = mob.Dir[animationType];
+            var infoNode = wzMob.root.Nodes["info"];
+            if (infoNode != null)
+            {
+                var linkNode = infoNode.Nodes["link"];
+                if (linkNode != null)
+                {
+                    var linkedImg = wzLoader.GetImg("Mob", linkNode.Value.ToString());
+                    var linkedNode = linkedImg.Node;
+                    animationNode = linkedNode.Nodes[animationType];
+                }
+                else
+                {
+                    animationNode = wzMob.root.Nodes[animationType];
+                }
+            }
+
+            _animationNodeCache[animationType] = animationNode;
         }
 
-        while (currentSpriteIndex < animationSprite.Sprite.Count)
+        return animationNode;
+    }
+
+    private int GetAnimationLength(Wz_Node animationNode)
+    {
+        int length = 0;
+        foreach(Wz_Node subNode in animationNode.Nodes)
         {
-            var wzSprite = animationSprite.Sprite[currentSpriteIndex.ToString()];
-            var sprite = wzSprite.sprite;
-            var spriteSize = wzSprite.Vector["size"];
-
-            if(wzSprite.HasString("_inlink"))
+            int outIndex;
+            if(int.TryParse(subNode.Text, out outIndex))
             {
-                var link = wzSprite.String["_inlink"];
-                var linkTokens = link.Split("/");
-
-                var targetWzSprite = mob.Dir[linkTokens[0]].Sprite[linkTokens[1]];
-
-                sprite = targetWzSprite.sprite;
-                spriteSize = targetWzSprite.Vector["size"];
+                ++length;
             }
-            else if(wzSprite.HasString("_outlink"))
+        }
+
+        return length;
+    }
+
+    Wz_Node GetPngNode(Wz_Node animationNode)
+    {
+        string fullpath = animationNode.FullPath + "\\" + currentSpriteIndex.ToString();
+        if (_pngNodeCache.ContainsKey(fullpath))
+        {
+            return _pngNodeCache[fullpath];
+        }
+        else
+        {
+            Wz_Node wzSpriteNode = animationNode.Nodes[currentSpriteIndex.ToString()];
+            Wz_Node wzPngNode = wzSpriteNode;
+            var valueType = wzSpriteNode.Value.GetType();
+
+            if (valueType == typeof(Wz_Uol))
             {
-                var link = wzSprite.String["_outlink"];
-                var linkTokens = link.Split("/");
+                Wz_Uol uol = (Wz_Uol)wzSpriteNode.Value;
+                Wz_Node uolTargetNode = uol.HandleUol(wzSpriteNode);
 
-                var mobId = linkTokens[1].Split(".")[0];
-
-                var targetWzSprite = loader.Load(mobId).Dir[linkTokens[2]].Sprite[linkTokens[3]];
-
-                sprite = targetWzSprite.sprite;
-                spriteSize = targetWzSprite.Vector["size"];
-            }
-            else if(wzSprite.HasString("_uollink"))
-            {
-                var link = wzSprite.String["_uollink"];
-                var linkTokens = link.Split("/");
-
-                if (linkTokens.Length == 1)
+                if (uolTargetNode.Value.GetType() == typeof(Wz_Png))
                 {
-                    wzSprite = animationSprite.Sprite[linkTokens[0]];
-                    sprite = wzSprite.sprite;
+                    wzPngNode = uolTargetNode;
                 }
-                else if(linkTokens.Length == 3)
+            }
+
+            _pngNodeCache[fullpath] = wzPngNode;
+            return wzPngNode;
+        }        
+    }
+
+    Wz_Png GetPngFromNode(Wz_Node pngNode)
+    {
+        return (Wz_Png)pngNode.Value;
+    }
+
+    Sprite GetSprite(Wz_Node pngNode)
+    {
+        var png = GetPngFromNode(pngNode);
+
+        if (_spriteCache.ContainsKey(pngNode.FullPath))
+        {
+            return _spriteCache[pngNode.FullPath];
+        }
+        else
+        {
+            var inlinkNode = pngNode.Nodes["_inlink"];
+            var outlinkNode = pngNode.Nodes["_outlink"];
+
+
+            if (inlinkNode != null)
+            {
+                var inlink = (string)inlinkNode.Value;
+                var fullpath = inlink.Replace('/', '\\');
+                var node = wzMob.root.FindNodeByPath(fullpath, true);
+
+                png = (Wz_Png)node.Value;
+            }
+
+            if (outlinkNode != null)
+            {
+                var outlink = (string)outlinkNode.Value;
+                var tokens = outlink.Split("/");
+                var wzDirName = tokens[0];
+                var wzImgName = tokens[1];
+
+                var fullpath = "";
+                for (int i = 2; i < tokens.Length; i++)
                 {
-                    wzSprite = mob.Dir[linkTokens[1]].Sprite[linkTokens[2]];
-                    sprite = wzSprite.sprite;
+                    fullpath += tokens[i];
+
+                    if (i < tokens.Length - 1)
+                    {
+                        fullpath += "\\";
+                    }
                 }
 
-                spriteSize = wzSprite.Vector["size"];
+                var img = wzLoader.GetImg("Mob", wzImgName.Split(".")[0]);
+                var targetNode = img.Node.FindNodeByPath(fullpath);
+                png = (Wz_Png)targetNode.Value;
             }
+
+            var bitmap = png.ExtractPng();
+            var texture = new Texture2D(bitmap.Width, bitmap.Height);
+
+            MemoryStream ms = new MemoryStream();
+            bitmap.Save(ms, ImageFormat.Png);
+            var buffer = new byte[ms.Length];
+
+            ms.Position = 0;
+            ms.Read(buffer, 0, buffer.Length);
+            
+            texture.LoadImage(buffer);
+            texture.Apply();
+
+            texture.wrapMode = TextureWrapMode.Clamp;
+
+            var sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100.0f);
+
+            _spriteCache[pngNode.FullPath] = sprite;
+            return sprite;
+        }
+    }
+
+    private IEnumerator AnimateCharacter()
+    {
+        var animationNode = GetAnimationNode(currentAnimationType);
+        var animationLength = GetAnimationLength(animationNode);
+
+        while (currentSpriteIndex < animationLength)
+        {
+            var wzPngNode = GetPngNode(animationNode);
+            var wzPng = GetPngFromNode(wzPngNode);
+
+            Sprite sprite = GetSprite(wzPngNode);
 
             character.renderer.sprite = sprite;
-            character.renderer.size = spriteSize;
+            character.renderer.size = new Vector2Int(sprite.texture.width, sprite.texture.height);
 
             var origin = character.renderer.size / 2;
 
-            if (wzSprite.HasVector("origin"))
+            var wzOriginNode = wzPngNode.Nodes["origin"];
+            if (wzOriginNode != null)
             {
-                var wzOrigin = wzSprite.Vector["origin"];
-                var wzLeftTop = wzOrigin;
-                var wzRightBottom = wzOrigin;
+                Wz_Vector wzOrigin = (Wz_Vector)wzOriginNode.Value;
 
-                if (wzSprite.HasVector("lt"))
-                {
-                    wzLeftTop = wzSprite.Vector["lt"];
-                }
-                if (wzSprite.HasVector("rb"))
-                {
-                    wzRightBottom = wzSprite.Vector["rb"];
-                }
+                Wz_Node leftTopNode = wzPngNode.Nodes["lt"];
+                Wz_Node rightBottomNode = wzPngNode.Nodes["rb"];
 
-                var leftTop = wzOrigin + wzLeftTop;
-                var rightBottom = wzOrigin + wzRightBottom;
+                Wz_Vector wzLeftTop = leftTopNode != null ? (Wz_Vector)leftTopNode.Value : wzOrigin;
+                Wz_Vector wzRightBottom = rightBottomNode != null ? (Wz_Vector)rightBottomNode.Value : wzOrigin;
+
+                var leftTop = new Vector2Int(wzOrigin.X + wzLeftTop.X, wzOrigin.Y + wzLeftTop.Y);
+                var rightBottom = new Vector2Int(wzOrigin.X + wzRightBottom.X, wzOrigin.Y + wzRightBottom.Y);
                 var center = (leftTop + rightBottom) / 2;
 
                 character.transform.localPosition = new Vector3(
-                    origin.x - wzOrigin.x, wzOrigin.y - origin.y, 0.0f);
+                    origin.x - wzOrigin.X, wzOrigin.Y - origin.y, 0.0f);
 
                 character.collider.offset = new Vector2(center.x - origin.x, origin.y - center.y);
                 character.collider.size = rightBottom - leftTop;
             }
 
-            if (wzSprite.HasInt("delay"))
+            Wz_Node delayNode = wzPngNode.Nodes["delay"];
+            if (delayNode != null)
             {
-                yield return new WaitForSeconds(wzSprite.Int["delay"] / 1000.0f);
+                yield return new WaitForSeconds((int)delayNode.Value / 1000.0f);
             }
             else
             {
@@ -204,93 +339,52 @@ public class DebugMob : MonoBehaviour
 
             currentSpriteIndex = currentSpriteIndex + 1;
         }
+
+        yield return null;
     }
 
     private IEnumerator AnimateEffect()
     {
-        WzData animationSprite = null;
-        if (mob.Dir["info"].HasString("link"))
-        {
-            animationSprite = loader.Load(mob.Dir["info"].String["link"]).Dir[animationType];
-        }
-        else
-        {
-            animationSprite = mob.Dir[animationType];
-        }
+        var animationNode = GetAnimationNode(currentAnimationType);
 
-        if (animationSprite.HasDir("info"))
+        var infoNode = animationNode.Nodes["info"];
+        if(infoNode != null)
         {
-            var animationInfo = animationSprite.Dir["info"];
-            if (animationInfo.HasDir("effect"))
+            var effectNode = infoNode.Nodes["effect"];
+            if (effectNode != null)
             {
-                var effectAnimation = animationInfo.Dir["effect"];
-                if (animationInfo.HasInt("effectAfter"))
+                var effectAfterNode = infoNode.Nodes["effectAfter"];
+                if (effectAfterNode != null)
                 {
-                    yield return new WaitForSeconds(animationInfo.Int["effectAfter"] / 1000.0f);
+                    yield return new WaitForSeconds((int)effectAfterNode.Value / 1000.0f);
                 }
 
                 effect.gameObject.SetActive(true);
-                while (currentEffectIndex < effectAnimation.Sprite.Count)
+                while (currentEffectIndex < effectNode.Nodes.Count)
                 {
-                    var wzSprite = effectAnimation.Sprite[System.Convert.ToString(currentEffectIndex)];
-                    var sprite = wzSprite.sprite;
-                    var spriteSize = wzSprite.Vector["size"];
+                    var wzPngNode = GetPngNode(effectNode);
+                    var wzPng = GetPngFromNode(wzPngNode);
 
-                    if (wzSprite.HasString("_inlink"))
-                    {
-                        var link = wzSprite.String["_inlink"];
-                        var linkTokens = link.Split("/");
-
-                        var targetWzSprite = mob.Dir[linkTokens[0]].Dir[linkTokens[1]].Dir[linkTokens[2]].Sprite[linkTokens[3]];
-
-                        sprite = targetWzSprite.sprite;
-                        spriteSize = targetWzSprite.Vector["size"];
-                    }
-                    else if (wzSprite.HasString("_outlink"))
-                    {
-                        var link = wzSprite.String["_outlink"];
-                        var linkTokens = link.Split("/");
-
-                        var mobId = linkTokens[1].Split(".")[0];
-
-                        var targetWzSprite = loader.Load(mobId).Dir[linkTokens[2]].Dir[linkTokens[3]].Dir[linkTokens[4]].Sprite[linkTokens[5]];
-
-                        sprite = targetWzSprite.sprite;
-                        spriteSize = targetWzSprite.Vector["size"];
-                    }
-                    else if (wzSprite.HasString("_uollink"))
-                    {
-                        var link = wzSprite.String["_uollink"];
-                        var linkTokens = link.Split("/");
-
-                        if (linkTokens.Length == 1)
-                        {
-                            wzSprite = animationSprite.Sprite[linkTokens[0]];
-                        }
-                        else if (linkTokens.Length == 3)
-                        {
-                            wzSprite = mob.Dir[linkTokens[1]].Sprite[linkTokens[2]];
-                        }
-
-                        sprite = wzSprite.sprite;
-                        spriteSize = wzSprite.Vector["size"];
-                    }
+                    Sprite sprite = GetSprite(wzPngNode);
 
                     effect.renderer.sprite = sprite;
-                    effect.renderer.size = spriteSize;
+                    effect.renderer.size = new Vector2Int(sprite.texture.width, sprite.texture.height);
 
-                    if (wzSprite.HasVector("origin"))
+                    var origin = effect.renderer.size / 2;
+
+                    var wzOriginNode = wzPngNode.Nodes["origin"];
+                    if (wzOriginNode != null)
                     {
-                        var origin = effect.renderer.size / 2;
-                        var wzOrigin = wzSprite.Vector["origin"];
+                        Wz_Vector wzOrigin = (Wz_Vector)wzOriginNode.Value;
 
                         effect.transform.localPosition = new Vector3(
-                            origin.x - wzOrigin.x, wzOrigin.y - origin.y, -1.0f);
+                            origin.x - wzOrigin.X, wzOrigin.Y - origin.y, -1.0f);
                     }
 
-                    if (wzSprite.HasInt("delay"))
+                    Wz_Node delayNode = wzPngNode.Nodes["delay"];
+                    if (delayNode != null)
                     {
-                        yield return new WaitForSeconds(wzSprite.Int["delay"] / 1000.0f);
+                        yield return new WaitForSeconds((int)delayNode.Value / 1000.0f);
                     }
                     else
                     {
@@ -301,7 +395,7 @@ public class DebugMob : MonoBehaviour
                 }
                 effect.gameObject.SetActive(false);
             }
-        }        
+        }
     }
 
     // Update is called once per frame
