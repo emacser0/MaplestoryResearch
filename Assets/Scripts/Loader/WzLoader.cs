@@ -2,10 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using WzComparerR2.WzLib;
 
+internal class WzLoaderCache
+{
+    public Wz_Structure structure;
+    public Dictionary<string, Wz_Image> images = new Dictionary<string, Wz_Image>();
+}
+
 public class WzLoader : MonoBehaviour
 {
-    private Dictionary<string, Wz_Structure> _structures = new Dictionary<string, Wz_Structure>();
-    private Dictionary<string, bool> _loaded = new Dictionary<string, bool>();
+    private Dictionary<string, WzLoaderCache> _cache = new Dictionary<string, WzLoaderCache>();
     private string[] wzFiles =
     {
         "Character",
@@ -32,27 +37,56 @@ public class WzLoader : MonoBehaviour
 
     }
 
-    public Wz_Structure GetWz(string wzName)
+    private void LoadWz(string wzName)
     {
-        if (_structures.ContainsKey(wzName))
+        if(_cache.ContainsKey(wzName))
         {
-            return _structures[wzName];
+            return;
         }
-
         Wz_Structure structure = new Wz_Structure();
         structure.LoadKMST1125DataWz("Data\\" + wzName + "\\" + wzName + ".wz");
-        _structures[wzName] = structure;
 
-        return structure;
+        _cache[wzName] = new WzLoaderCache();      
+        _cache[wzName].structure = structure;
+
+        return;
+    }
+
+    private WzLoaderCache GetCache(string wzName)
+    {
+        if(_cache.ContainsKey(wzName))
+        {
+            return _cache[wzName];
+        }
+
+        LoadWz(wzName);
+
+        return _cache[wzName];
+    }
+
+    public Wz_Structure GetWz(string wzName)
+    {
+        if (_cache.ContainsKey(wzName))
+        {
+            return _cache[wzName].structure;
+        }
+
+        LoadWz(wzName);
+
+        return _cache[wzName].structure;
     }
 
     public Wz_Image GetImg(string wzName, string id)
     {
-        Wz_Structure structure = GetWz(wzName);
+        WzLoaderCache cache = GetCache(wzName);
+        if(cache.images.ContainsKey(id))
+        {
+            return cache.images[id];
+        }
 
         Wz_Node node = null;
 
-        foreach (Wz_Node subNode in structure.WzNode.Nodes)
+        foreach (Wz_Node subNode in cache.structure.WzNode.Nodes)
         {
             if (subNode.Text == id + ".img")
             {
@@ -67,6 +101,8 @@ public class WzLoader : MonoBehaviour
 
         Wz_Image img = (Wz_Image)node.Value;
         img.TryExtract();
+
+        cache.images[id] = img;
 
         return img;
     }

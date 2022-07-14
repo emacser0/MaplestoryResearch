@@ -116,6 +116,11 @@ public class DebugMob : MonoBehaviour
         animationCoroutine = StartCoroutine(Animate());
     }
 
+    private void QueryName(string id)
+    {
+
+    }
+
     public void SetAnimationType(string animationType)
     {
         currentAnimationType = animationType;

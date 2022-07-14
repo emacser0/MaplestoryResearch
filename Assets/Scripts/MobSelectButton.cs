@@ -8,7 +8,7 @@ public class MobSelectButton : MonoBehaviour
     private GameObject mobWrapper;
 
     private Button button;
-    private Text text;    
+    public string id;
 
     // Start is called before the first frame update
     void Start()
@@ -16,7 +16,6 @@ public class MobSelectButton : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(delegate { OnClick(); });
 
-        text = transform.Find("Text").GetComponent<Text>();
         mobWrapper = GameObject.Find("MobWrapper");
     }
     private void OnClick()
@@ -29,9 +28,10 @@ public class MobSelectButton : MonoBehaviour
 
         var mob = new GameObject("Mob");
         mob.transform.parent = mobWrapper.transform;
+        mob.transform.localPosition = Vector3.zero;
 
         var debugMob = mob.AddComponent<DebugMob>();
-        debugMob.Load(text.text.Split(".")[0]);
+        debugMob.Load(id);
     }
 
     // Update is called once per frame
