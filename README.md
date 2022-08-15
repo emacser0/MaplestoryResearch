@@ -10,6 +10,7 @@ OpenRCT2는 Roller Coaster Tycoon 2를 리버스 엔지니어링하여 오픈소
 
 ## 맛보기
 현재 Mob.wz의 대부분(99% 이상)의 몬스터는 애니메이션 스프라이트를 자유롭게 로드해서 렌더링할 수 있다.
+
 아래는 디버깅용 몬스터 뷰어의 데모이다.
 
 https://user-images.githubusercontent.com/29349337/181535768-1744b902-0313-444b-8bc3-2848db9502ed.mp4
